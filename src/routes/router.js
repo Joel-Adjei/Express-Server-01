@@ -4,7 +4,8 @@ import userRoute from "./usersRoute.js";
 
 const router = Router();
 
-router.use(itemsRouter);
-router.use(userRoute)
+router.use("/items", itemsRouter);
+router.use("/users", userRoute);
+router.use("/auth", userRoute);
 
 export default router;
