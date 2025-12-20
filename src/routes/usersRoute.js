@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { registerUser } from "../controllers/authController.js";
+import resolveId from "../middleware/resolveId.js";
 
 const router = Router();
 
@@ -23,15 +23,14 @@ router.get("/:id", (req, res) => {
   }
 });
 
-router.put("/:id", (req, res) => {
-  const { body, params } = req;
-  const parseId = parseInt(params.id);
-  if (isNaN(parseId)) return res.sendStatus(400);
+router.put("/:id", resolveId, (req, res) => {
+  const id = req.parseId;
+  const body = req.body;
 
-  const user = usersData.find((user) => user.id === parseId);
+  const user = usersData.find((user) => user.id === id);
   if (user) {
-    usersData[parseId - 1] = {
-      id: parseId,
+    usersData[id - 1] = {
+      id: id,
       name: body.name,
     };
     return res
@@ -39,9 +38,28 @@ router.put("/:id", (req, res) => {
         data: usersData,
       })
       .sendStatus(200);
+  } else {
+    return res.json({
+      message: "user not found",
+    });
   }
 
   return res.sendStatus(500);
+});
+
+router.delete("/delete/:id", resolveId, (req, res) => {
+  const { parseId } = req;
+  const user = usersData.find(({ id }) => id === parseId);
+  if (user) {
+    const newData = usersData.filter(({ id }) => id !== parseId);
+    return res.json({ message: "user deleted successfull" }).status(200);
+  }
+
+  return res
+    .json({
+      message: "user with the id do not exist",
+    })
+    .status(404);
 });
 
 export default router;
