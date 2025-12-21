@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { response, Router } from "express";
 import resolveId from "../middleware/resolveId.js";
 
 const router = Router();
@@ -13,7 +13,7 @@ router.get("/", (req, res) => {
   res.send(usersData);
 });
 
-router.get("/:id", (req, res) => {
+router.get("user/:id", (req, res) => {
   const id = parseInt(req.params.id);
   const user = usersData.find((u) => u.id === id);
   if (user) {
@@ -60,6 +60,21 @@ router.delete("/delete/:id", resolveId, (req, res) => {
       message: "user with the id do not exist",
     })
     .status(404);
+});
+
+router.get("/search", (req, res) => {
+  const { q, filter } = req.query;
+
+  if (q) {
+    const searchUsers = usersData.filter(({ name }) =>
+      name.toLocaleLowerCase().includes(q.toLocaleLowerCase())
+    );
+    if (searchUsers.length == 0) {
+      return res.json({ message: "no users found", data: [] }).status(200);
+    }
+    return res.json({ message: "found users", data: searchUsers }).status(200);
+  }
+  return res.json({ query });
 });
 
 export default router;
