@@ -1,5 +1,8 @@
 import { response, Router } from "express";
 import resolveId from "../middleware/resolveId.js";
+import { checkSchema, matchedData, validationResult } from "express-validator";
+import { updateUserValidation } from "../utils/validationSchema.js";
+import { errorMessageDisplay } from "../utils/utils.js";
 
 const router = Router();
 
@@ -23,28 +26,28 @@ router.get("user/:id", (req, res) => {
   }
 });
 
-router.put("/:id", resolveId, (req, res) => {
-  const id = req.parseId;
-  const body = req.body;
+router.put("/:id", checkSchema(updateUserValidation), (req, res) => {
+  const validation = validationResult(req);
+  if (!validation.isEmpty()) {
+    res.status(400).json({ error: errorMessageDisplay(validation) });
+  }
 
-  const user = usersData.find((user) => user.id === id);
+  const { id, name: userName } = matchedData(req);
+
+  const user = usersData.find((user) => user.id === parseInt(id));
   if (user) {
     usersData[id - 1] = {
       id: id,
-      name: body.name,
+      name: userName,
     };
-    return res
-      .json({
-        data: usersData,
-      })
-      .sendStatus(200);
+    return res.status(200).json({
+      data: usersData,
+    });
   } else {
-    return res.json({
+    return res.status(404).json({
       message: "user not found",
     });
   }
-
-  return res.sendStatus(500);
 });
 
 router.delete("/delete/:id", resolveId, (req, res) => {
