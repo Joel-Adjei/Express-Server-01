@@ -1,9 +1,18 @@
 import { Router } from "express";
 import { registerUser } from "../controllers/authController.js";
+import { checkSchema } from "express-validator";
+import { registerUserValidation } from "../utils/validationSchema.js";
+import validationChecker from "../middleware/validationChecker.js";
 
 const router = Router();
 
-router.post("/register", registerUser);
+router.post(
+  "/register",
+  checkSchema(registerUserValidation),
+  validationChecker,
+  registerUser
+);
+
 router.post("/login", (req, res) => {
   const { username, password } = req.body;
   // Dummy authentication logic

@@ -3,6 +3,7 @@ import resolveId from "../middleware/resolveId.js";
 import { checkSchema, matchedData, validationResult } from "express-validator";
 import { updateUserValidation } from "../utils/validationSchema.js";
 import { errorMessageDisplay } from "../utils/utils.js";
+import validationChecker from "../middleware/validationChecker.js";
 
 const router = Router();
 
@@ -26,29 +27,29 @@ router.get("user/:id", (req, res) => {
   }
 });
 
-router.put("/:id", checkSchema(updateUserValidation), (req, res) => {
-  const validation = validationResult(req);
-  if (!validation.isEmpty()) {
-    res.status(400).json({ error: errorMessageDisplay(validation) });
-  }
+router.put(
+  "/:id",
+  checkSchema(updateUserValidation),
+  validationChecker,
+  (req, res) => {
+    const { id, name: userName } = matchedData(req);
 
-  const { id, name: userName } = matchedData(req);
-
-  const user = usersData.find((user) => user.id === parseInt(id));
-  if (user) {
-    usersData[id - 1] = {
-      id: id,
-      name: userName,
-    };
-    return res.status(200).json({
-      data: usersData,
-    });
-  } else {
-    return res.status(404).json({
-      message: "user not found",
-    });
+    const user = usersData.find((user) => user.id === parseInt(id));
+    if (user) {
+      usersData[id - 1] = {
+        id: id,
+        name: userName,
+      };
+      return res.status(200).json({
+        data: usersData,
+      });
+    } else {
+      return res.status(404).json({
+        message: "user not found",
+      });
+    }
   }
-});
+);
 
 router.delete("/delete/:id", resolveId, (req, res) => {
   const { parseId } = req;

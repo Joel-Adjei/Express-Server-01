@@ -1,3 +1,27 @@
+const registerUserValidation = {
+  name: {
+    notEmpty: {
+      errorMessage: "Name is required",
+    },
+    isString: {
+      options: {
+        min: 3,
+        max: 20,
+      },
+      errorMessage:
+        "Name should be more than 3 characters and less than 20 characters",
+    },
+  },
+  email: {
+    notEmpty: {
+      errorMessage: "Email is Required",
+    },
+    isEmail: {
+      errorMessage: "Invalid email format",
+    },
+  },
+};
+
 const getItembyIdValidation = {
   id: {
     isNumeric: {
@@ -27,4 +51,4 @@ const updateUserValidation = {
     },
   },
 };
-export { getItembyIdValidation, updateUserValidation };
+export { getItembyIdValidation, registerUserValidation, updateUserValidation };
