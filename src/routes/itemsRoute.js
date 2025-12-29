@@ -8,6 +8,7 @@ import {
 } from "express-validator";
 import { getItembyIdValidation } from "../utils/validationSchema.js";
 import { errorMessageDisplay } from "../utils/utils.js";
+import validationChecker from "../middleware/validationChecker.js";
 
 const itemsRouter = Router();
 
@@ -22,21 +23,19 @@ itemsRouter.get("/all", (req, res) => {
   res.send(items);
 });
 
-itemsRouter.get("/:id", checkSchema(getItembyIdValidation), (req, res) => {
-  const validationResults = validationResult(req);
-  if (!validationResults.isEmpty()) {
-    return res.status(400).json({
-      errors: errorMessageDisplay(validationResults),
-    });
-  }
+itemsRouter.get(
+  "/:id",
+  checkSchema(getItembyIdValidation),
+  validationChecker,
+  (req, res) => {
+    const requestData = matchedData(req);
+    const searchItem = items.find(({ id }) => id === parseInt(requestData.id));
 
-  const requestData = matchedData(req);
-  const searchItem = items.find(({ id }) => id === parseInt(requestData.id));
-
-  if (searchItem) {
-    res.status(200).send({ message: "items found", data: searchItem });
+    if (searchItem) {
+      res.status(200).send({ message: "items found", data: searchItem });
+    }
+    res.status(404).send({ message: "item not found", data: requestData });
   }
-  res.status(404).send({ message: "item not found", data: requestData });
-});
+);
 
 export default itemsRouter;
