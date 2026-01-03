@@ -2,16 +2,10 @@ import { response, Router } from "express";
 import resolveId from "../middleware/resolveId.js";
 import { checkSchema, matchedData, validationResult } from "express-validator";
 import { updateUserValidation } from "../utils/validationSchema.js";
-import { errorMessageDisplay } from "../utils/utils.js";
+import { errorMessageDisplay, usersData } from "../utils/utils.js";
 import validationChecker from "../middleware/validationChecker.js";
 
 const router = Router();
-
-let usersData = [
-  { id: 1, name: "John Doe" },
-  { id: 2, name: "Jane Smith" },
-  { id: 3, name: "Alice Johnson" },
-];
 
 router.get("/", (req, res) => {
   res.send(usersData);
@@ -38,7 +32,7 @@ router.put(
     if (user) {
       usersData[id - 1] = {
         id: id,
-        name: userName,
+        username: userName,
       };
       return res.status(200).json({
         data: usersData,
@@ -70,8 +64,8 @@ router.get("/search", (req, res) => {
   const { q, filter } = req.query;
 
   if (q) {
-    const searchUsers = usersData.filter(({ name }) =>
-      name.toLocaleLowerCase().includes(q.toLocaleLowerCase())
+    const searchUsers = usersData.filter(({ username }) =>
+      username.toLocaleLowerCase().includes(q.toLocaleLowerCase())
     );
     if (searchUsers.length == 0) {
       return res.json({ message: "no users found", data: [] }).status(200);
