@@ -24,13 +24,15 @@ router.post(
   passport.authenticate("local"),
   (req, res) => {
     const { username, password } = req.body;
-    // Dummy authentication logic
-    if (username === "admin" && password === "password") {
-      return res.status(200).json({ message: "Login successful" });
-    } else {
-      return res.status(401).json({ message: "Invalid credentials" });
-    }
+    return res.sendStatus(200);
   }
 );
+
+router.get("/status", (req, res) => {
+  console.log("Auth Status");
+  console.log(req.user);
+  if (!req.user) return res.sendStatus(404);
+  return res.sendStatus(200);
+});
 
 export default router;

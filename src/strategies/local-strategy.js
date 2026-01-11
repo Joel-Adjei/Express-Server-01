@@ -2,6 +2,22 @@ import passport from "passport";
 import { Strategy } from "passport-local";
 import { usersData } from "../utils/utils.js";
 
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((id, done) => {
+  try {
+    const searchedUser = usersData.find((us) => us.id === id);
+    if (!searchedUser) {
+      throw new Error("Usernot found");
+    }
+    return done(null, searchedUser);
+  } catch (error) {
+    done(error, null);
+  }
+});
+
 export default passport.use(
   new Strategy((username, password, done) => {
     try {
