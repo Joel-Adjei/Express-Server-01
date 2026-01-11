@@ -1,4 +1,4 @@
-const registerUserValidation = {
+export const registerUserValidation = {
   name: {
     notEmpty: {
       errorMessage: "Name is required",
@@ -22,7 +22,20 @@ const registerUserValidation = {
   },
 };
 
-const getItembyIdValidation = {
+export const loginValidation = {
+  username: {
+    notEmpty: {
+      errorMessage: "Username is required",
+    },
+  },
+  password: {
+    notEmpty: {
+      errorMessage: "Password is required",
+    },
+  },
+};
+
+export const getItembyIdValidation = {
   id: {
     isNumeric: {
       errorMessage: "Should be a number",
@@ -33,7 +46,7 @@ const getItembyIdValidation = {
   },
 };
 
-const updateUserValidation = {
+export const updateUserValidation = {
   id: {
     isNumeric: {
       errorMessage: "Should be a number",
@@ -51,4 +64,3 @@ const updateUserValidation = {
     },
   },
 };
-export { getItembyIdValidation, registerUserValidation, updateUserValidation };
