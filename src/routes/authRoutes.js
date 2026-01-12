@@ -35,4 +35,12 @@ router.get("/status", (req, res) => {
   return res.sendStatus(200);
 });
 
+router.post("/logout", (req, res) => {
+  if (!req.user) return res.sendStatus(401);
+  req.logout((err) => {
+    if (err) return res.sendStatus(500);
+    return res.sendStatus(200);
+  });
+});
+
 export default router;
